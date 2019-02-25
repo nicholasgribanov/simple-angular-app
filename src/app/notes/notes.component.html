@@ -1,0 +1,8 @@
+<ul>
+  <li *ngFor="let note of notes; let i=index">
+    {{note.text}} <button (click)="remove(i)">remove</button> <button (click)="top(i)">top</button>
+  </li>
+</ul>
+
+<textarea [(ngModel)] = "text"></textarea>
+<button (click)="add()">Add</button>
