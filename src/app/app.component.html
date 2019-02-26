@@ -1,9 +1,18 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to Angular  App!
-  </h1>
-  <app-notes></app-notes>
-
+<nav class="navbar navbar-dark bg-primary navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <div class="navbar-brand">Notes tutorial app</div>
+    </div>
+  </div>
+</nav>
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <app-notes [section]="section"></app-notes>
+    </div>
+    <div class="col-md-4">
+      <app-sections (sectionChanged)="setSection($event)"></app-sections>
+    </div>
+  </div>
 </div>
-

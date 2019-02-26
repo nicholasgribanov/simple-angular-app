@@ -18,6 +18,29 @@ mongoClient.connect(function(err, mongoClient) {
     db1.notes = notes;
   });
 
+  db1.collection('sections', function (err, sections) {
+    db1.sections = sections;
+  });
+
+  app.get("/sections", function (req, res) {
+    db1.sections.find(req.query).toArray(function (err, items) {
+      res.send(items);
+    })
+  });
+
+  app.post("/sections/replace", function (req, resp) {
+    if(req.body.length===0){
+      resp.end();
+    }
+    db1.sections.remove({}, function (err, res) {
+      if(err) {console.log(err);}
+      db1.sections.insertMany(req.body, function (err, res) {
+        if(err) console.log(err);
+        resp.end();
+      });
+    });
+  });
+
   app.get("/notes", function (req, res) {
     db1.notes.find(req.query).sort({order: 1}).toArray(function (err, items) {
       res.send(items);

@@ -6,6 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  section: string;
   title = 'notes-app';
   name = 'John';
+  setSection(section: string) {
+    this.section = section;
+  }
 }

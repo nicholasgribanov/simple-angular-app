@@ -6,18 +6,24 @@ import {FormsModule} from '@angular/forms';
 import { NotesComponent } from './notes/notes.component';
 import {HttpClientModule} from '@angular/common/http';
 import {DatePipe} from '@angular/common';
+import { SectionsComponent } from './sections/sections.component';
+import {DragulaModule, DragulaService} from 'ng2-dragula';
+import { SectionFilterPipe } from './section-filter.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NotesComponent
+    NotesComponent,
+    SectionsComponent,
+    SectionFilterPipe
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    DragulaModule
   ],
-  providers: [DatePipe],
+  providers: [DatePipe, DragulaService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

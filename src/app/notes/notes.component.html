@@ -1,8 +1,23 @@
-<ul>
-  <li *ngFor="let note of notes; let i=index">
-    {{note.text}} <button (click)="remove(note._id)">remove</button> <button (click)="top(i)">top</button>
-  </li>
-</ul>
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Add your note to section </h3>
+  </div>
 
-<textarea [(ngModel)] = "text"></textarea>
-<button (click)="add()">Add</button>
+  <div class="card-body">
+    <div class="form-group">
+      <textarea style="min-width:100%;min-height:200px" class="form-control" #noteText></textarea>
+    </div>
+    <button (click)="add(noteText)" class="btn btn-primary">Post note</button>
+  </div>
+</div>
+
+<br>
+<div class="card">
+  <div class="card-header">Notes:</div>
+
+  <ul class="list-group">
+    <li *ngFor="let note of notes;" class="list-group-item">
+      {{note.text}} <button (click)="remove(note._id)">remove</button>
+    </li>
+  </ul>
+</div>

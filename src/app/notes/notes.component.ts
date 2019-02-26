@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 
@@ -7,10 +7,11 @@ import { DatePipe } from '@angular/common';
   templateUrl: './notes.component.html',
   styleUrls: ['./notes.component.css']
 })
-export class NotesComponent implements OnInit {
+export class NotesComponent implements OnChanges {
   constructor(private http: HttpClient, public datepipe: DatePipe) {
-    this.readNotes();
+
   }
+  @Input() section: string;
   notes: Note[] = [
     {text: 'Note One', date: this.datepipe.transform(new Date(), 'HH:mm dd.MM.yyyy'), order: 1},
     {text: 'Note Two', date: this.datepipe.transform(new Date(), 'HH:mm dd.MM.yyyy'), order: 2}
@@ -19,9 +20,15 @@ export class NotesComponent implements OnInit {
   private order = this.notes.length - 2;
 
   private notesUrl = 'notes';
-  add() {
-    const note = {text: this.text, date: this.datepipe.transform(new Date(), 'HH:mm dd.MM.yyyy'), order: this.order + 1};
-    this.text = '';
+  setSection(section: string) {
+    this.section = section;
+  }
+  add(noteText: HTMLTextAreaElement) {
+    const note = {text: noteText.value,
+      date: this.datepipe.transform(new Date(), 'HH:mm dd.MM.yyyy'),
+      order: this.order + 1,
+      section: this.section};
+    noteText.value = '';
     this.order++;
     this.addNote(note);
   }
@@ -41,7 +48,7 @@ export class NotesComponent implements OnInit {
       .then(response => this.readNotes());
   }
   getNotes(): Promise<Note[]> {
-    return this.http.get<Note[]>(this.notesUrl).toPromise();
+    return this.http.get<Note[]>(this.notesUrl, {params: {section: this.section}}).toPromise();
   }
   readNotes() {
     this.getNotes().then(notes => {
@@ -60,7 +67,8 @@ export class NotesComponent implements OnInit {
         }
       }).catch(err => console.error(err));
   }
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges): void {
+    this.readNotes();
   }
 
 }

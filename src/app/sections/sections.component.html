@@ -1,0 +1,17 @@
+<div class="input-group" style="padding-bottom:20px">
+  <input type="text" class="form-control" placeholder="New section name" #newSection>
+  <input type="text" class="form-control" placeholder="Section Filter" #filter (keyup)="filterValue=filter.value" >
+  <span class="input-group-btn">
+        <button class="btn btn-default" type="button" (click)="addSection(newSection)">Add</button>
+    </span>
+</div>
+
+<ul class="list-group" [dragula]="sections">
+  <li *ngFor="let section of sections | sectionFilter:filter.value"
+      class="list-group-item"
+      style="cursor: default"
+      [ngClass]="{active:section.title==activeSection}"
+      (click)="showSection(section)">
+    {{section.title}}
+  </li>
+</ul>
