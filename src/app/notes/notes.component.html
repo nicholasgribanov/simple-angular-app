@@ -1,6 +1,6 @@
 <ul>
   <li *ngFor="let note of notes; let i=index">
-    {{note.text}} <button (click)="remove(i)">remove</button> <button (click)="top(i)">top</button>
+    {{note.text}} <button (click)="remove(note._id)">remove</button> <button (click)="top(i)">top</button>
   </li>
 </ul>
 
