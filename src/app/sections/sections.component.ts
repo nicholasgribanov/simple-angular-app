@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {DragulaService} from 'ng2-dragula';
 
@@ -14,6 +14,7 @@ export class SectionsComponent implements OnDestroy {
   @Output() sectionChanged: EventEmitter<string> = new EventEmitter<string>();
   sectionReplaceUrl = '/sections/replace';
   filterValue = '';
+
   onDrop(value) {
     const [bag, elementMoved, targetContainer, srcContainer] = value;
     if (targetContainer.children) {
@@ -23,9 +24,11 @@ export class SectionsComponent implements OnDestroy {
       });
     }
   }
+
   getSections(): Promise<Section[]> {
     return this.http.get<Section[]>(this.sectionUrl).toPromise();
   }
+
   async readSections() {
     this.sections = await this.getSections();
     if (!this.activeSection && this.sections.length > 0) {
@@ -36,12 +39,12 @@ export class SectionsComponent implements OnDestroy {
   constructor(private http: HttpClient, private dragulaService: DragulaService) {
     this.readSections();
     dragulaService.drop().subscribe(this.onDrop.bind(this));
-    dragulaService.createGroup('sections', {moves: () => this.filterValue.length === 0 });
+    dragulaService.createGroup('sections', {moves: () => this.filterValue.length === 0});
   }
 
   showSection(section: Section) {
-    this.activeSection = section.title;
-    this.sectionChanged.emit(this.activeSection);
+   // this.activeSection = section.title;
+    this.sectionChanged.emit(section.title);
   }
 
   addSection(newSection: HTMLInputElement) {
@@ -60,6 +63,12 @@ export class SectionsComponent implements OnDestroy {
 
   private writeSections() {
     return this.http.post(this.sectionReplaceUrl, this.sections);
+  }
+  @Input()
+  set section(section: string) {
+    if (section && section.length > 0) {
+      this.activeSection = section;
+    }
   }
 
   ngOnDestroy(): void {

@@ -63,6 +63,10 @@ mongoClient.connect(function(err, mongoClient) {
     });
   });
 
+  app.get("*", function (req, res, next) {
+    res.sendFile('index.html', {root: __dirname + '/dist/notes-app'});
+  });
+
 });
 
 
@@ -86,4 +90,5 @@ console.log('ha');
 console.log('ha');
 
 console.log('ha');
+
 app.listen(8080);

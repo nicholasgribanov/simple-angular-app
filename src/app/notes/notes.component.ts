@@ -1,6 +1,8 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { DatePipe } from '@angular/common';
+import {NotesService} from '../notes.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-notes',
@@ -8,14 +10,16 @@ import { DatePipe } from '@angular/common';
   styleUrls: ['./notes.component.css']
 })
 export class NotesComponent implements OnChanges {
-  constructor(private http: HttpClient, public datepipe: DatePipe) {
+  constructor(private http: HttpClient, public datepipe: DatePipe, private notesService: NotesService) {
 
   }
+  @ViewChild('noteText') noteText: ElementRef<HTMLTextAreaElement>;
   @Input() section: string;
   notes: Note[] = [
     {text: 'Note One', date: this.datepipe.transform(new Date(), 'HH:mm dd.MM.yyyy'), order: 1},
     {text: 'Note Two', date: this.datepipe.transform(new Date(), 'HH:mm dd.MM.yyyy'), order: 2}
   ];
+  notes$: Observable<Note[]>;
   text: string;
   private order = this.notes.length - 2;
 
@@ -47,14 +51,10 @@ export class NotesComponent implements OnChanges {
     this.http.post(this.notesUrl, note).toPromise()
       .then(response => this.readNotes());
   }
-  getNotes(): Promise<Note[]> {
-    return this.http.get<Note[]>(this.notesUrl, {params: {section: this.section}}).toPromise();
-  }
-  readNotes() {
-    this.getNotes().then(notes => {
-      this.notes = notes;
-    });
-  }
+   readNotes() {
+    this.notesService.getNotes(this.section).subscribe(notes => this.notes = notes);
+    this.notes$ = this.notesService.getNotes(this.section);
+   }
   remove(id: string) {
     this.http.delete<{ok: boolean}>(this.notesUrl, {params: {id}})
       .toPromise()
@@ -73,7 +73,7 @@ export class NotesComponent implements OnChanges {
 
 }
 
-interface Note {
+export interface Note {
   _id?: string;
   text: string;
   date: string;

@@ -6,13 +6,7 @@
   </div>
 </nav>
 <br>
-<div class="container">
-  <div class="row">
-    <div class="col-md-8">
-      <app-notes [section]="section"></app-notes>
-    </div>
-    <div class="col-md-4">
-      <app-sections (sectionChanged)="setSection($event)"></app-sections>
-    </div>
-  </div>
-</div>
+
+      <router-outlet></router-outlet>
+<a [routerLink]="'wrongpage'">Wrong Page</a>
+
