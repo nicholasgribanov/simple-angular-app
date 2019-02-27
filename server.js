@@ -22,6 +22,17 @@ mongoClient.connect(function(err, mongoClient) {
     db1.sections = sections;
   });
 
+  db1.collection('users', function (error, users) {
+    db1.users = users;
+  });
+
+  app.post("/users", function (req, res) {
+    db1.users.insert(req.body, function (resp) {
+      req.session.userName = req.body.name;
+      res.end();
+    });
+  });
+
   app.get("/sections", function (req, res) {
     db1.sections.find(req.query).toArray(function (err, items) {
       res.send(items);
@@ -61,6 +72,16 @@ mongoClient.connect(function(err, mongoClient) {
         res.send({ok: true});
       }
     });
+  });
+
+  app.get('/checkUserUnique', function (req, res) {
+   db1.users.find({userName: req.query.user}).toArray(function (err, items) {
+     if (items.length > 0) {
+       res.send(false)
+     } else {
+       res.send(true);
+     }
+   });
   });
 
   app.get("*", function (req, res, next) {
