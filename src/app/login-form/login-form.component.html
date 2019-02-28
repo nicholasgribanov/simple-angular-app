@@ -1,0 +1,22 @@
+<form *ngIf="!loggedIn" class="form-inline"
+      style="margin-bottom: auto">
+  <input type="text" placeholder="Username" name="username"
+         class="form-control mr-sm-2" [(ngModel)]="userForm.userName"
+         (keyup.enter)="login()">
+  <input type="password" placeholder="Password" name="password"
+         class="form-control mr-sm-2" [(ngModel)]="userForm.password">
+  <button type="submit" class="btn btn-success" (click)="login()">
+    Sign in
+  </button>
+
+  <ng-content></ng-content>
+</form>
+<div *ngIf="failedLogin" style="color:white">
+  Wrong username or password
+</div>
+<div *ngIf="loggedIn" style="color:white">
+  User: <b>{{userForm?.userName}}</b>
+  <button type="submit" class="btn btn-success mx-sm-2" (click)="logout()">
+    Logout
+  </button>
+</div>

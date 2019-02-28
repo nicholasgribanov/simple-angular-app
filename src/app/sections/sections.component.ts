@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {DragulaService} from 'ng2-dragula';
+import {LoginService} from '../services/login.service';
 
 @Component({
   selector: 'app-sections',
@@ -36,7 +37,8 @@ export class SectionsComponent implements OnDestroy {
     }
   }
 
-  constructor(private http: HttpClient, private dragulaService: DragulaService) {
+  constructor(private http: HttpClient, private dragulaService: DragulaService, private loginService: LoginService) {
+    this.loginService.userLogin$.subscribe(user => this.readSections());
     this.readSections();
     dragulaService.drop().subscribe(this.onDrop.bind(this));
     dragulaService.createGroup('sections', {moves: () => this.filterValue.length === 0});
