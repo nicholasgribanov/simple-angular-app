@@ -9,6 +9,10 @@ var Server = require('mongodb').Server;
 var mongoClient = new MongoClient(new Server('localhost', 27017));
 var ObjectId = require('mongodb').ObjectID;
 console.log(MongoClient.prototype);
+
+function setUserQuery(req) {
+  req.query.userName = req.session.userName || "demo";
+}
 mongoClient.connect(function(err, mongoClient) {
   var db1 = mongoClient.db("tutor");
   if(err) console.log(err);
@@ -28,41 +32,45 @@ mongoClient.connect(function(err, mongoClient) {
 
   app.post("/users", function (req, res) {
     db1.users.insert(req.body, function (resp) {
+      setUserQuery(req);
+      req.body.userName = req.session.userName || "demo";
       req.session.userName = req.body.name;
       res.end();
     });
   });
 
   app.get("/sections", function (req, res) {
-    db1.sections.find(req.query).toArray(function (err, items) {
-      res.send(items);
-    })
-  });
-
-  app.post("/sections/replace", function (req, resp) {
-    if(req.body.length===0){
-      resp.end();
-    }
-    db1.sections.remove({}, function (err, res) {
-      if(err) {console.log(err);}
-      db1.sections.insertMany(req.body, function (err, res) {
-        if(err) console.log(err);
-        resp.end();
-      });
+    var userName = req.session.userName || "demo";
+    db1.users.find({userName: userName}, {$set:{sections:req.body}}).toArray(function (err, items) {
+      var user = items[0];
+      res.send(user.sections||[]);
     });
   });
 
+  app.post("/sections/replace", function(req,res) {
+    var userName = req.session.userName || "demo";
+    db1.users.update({userName:userName},
+      {$set:{sections:req.body}},
+      function() {
+        res.end();
+      });
+  });
+
   app.get("/notes", function (req, res) {
+    setUserQuery(req);
     db1.notes.find(req.query).sort({order: 1}).toArray(function (err, items) {
       res.send(items);
     })
   });
   app.post("/notes", function (req,res) {
+    setUserQuery(req);
+    req.body.userName = req.session.userName || "demo";
     db1.notes.insert(req.body).then(function () {
       res.end();
     });
   });
   app.delete("/notes", function (req, res) {
+    setUserQuery(req);
     var id = new ObjectId(req.query.id);
     db1.notes.remove({_id: id}, function (err) {
       if(err){
@@ -75,6 +83,7 @@ mongoClient.connect(function(err, mongoClient) {
   });
 
   app.get('/checkUserUnique', function (req, res) {
+    setUserQuery(req);
    db1.users.find({userName: req.query.user}).toArray(function (err, items) {
      if (items.length > 0) {
        res.send(false)
@@ -84,10 +93,27 @@ mongoClient.connect(function(err, mongoClient) {
    });
   });
 
-  app.get("*", function (req, res, next) {
-    res.sendFile('index.html', {root: __dirname + '/dist/notes-app'});
+  app.post("/login", function(req,res) {
+    db1.users.find(
+      {userName:req.body.userName,
+        password:req.body.password})
+      .toArray(function(err, items) {
+        if (items.length>0) {
+          req.session.userName = req.body.userName;
+        }
+        res.send(items.length>0);
+      });
   });
 
+  app.get("/logout", function(req, res) {
+    req.session.userName = null;
+    res.end();
+  });
+
+  app.get("*", function (req, res, next) {
+    setUserQuery(req);
+    res.sendFile('index.html', {root: __dirname + '/dist/notes-app'});
+  });
 });
 
 

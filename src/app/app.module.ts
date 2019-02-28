@@ -17,6 +17,7 @@ import {CanDeactivateNoteService} from './can-deactivate-note.service';
 import { UserFormComponent } from './user-form/user-form.component';
 import { EqualToValidatorDirective } from './directives/equal-to-validator.directive';
 import { UserUniqueValidatorDirective } from './directives/user-unique-validator.directive';
+import { LoginFormComponent } from './login-form/login-form.component';
 
 const appRoutes: Routes = [
   {path: '', component: NotesEditorComponent, canDeactivate: [CanDeactivateNoteService]},
@@ -37,7 +38,8 @@ const appRoutes: Routes = [
     ViewSectionComponent,
     UserFormComponent,
     EqualToValidatorDirective,
-    UserUniqueValidatorDirective
+    UserUniqueValidatorDirective,
+    LoginFormComponent
   ],
   imports: [
     BrowserModule,
