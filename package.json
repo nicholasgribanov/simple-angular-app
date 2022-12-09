@@ -23,7 +23,7 @@
     "bootstrap": "^4.3.1",
     "core-js": "^2.5.4",
     "dragula": "^3.7.2",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-session": "^1.15.6",
     "mongodb": "^3.1.13",
     "ng2-dragula": "^2.1.1",
